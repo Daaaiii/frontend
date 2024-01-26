@@ -4,7 +4,7 @@ import Client from "../components/clients/page";
 export default function Clients() {
 	return (
 		<main className=" flex">
-			<Sidebar/>            
+			<Sidebar/>
 			<Client/>
 		</main>
 	);
