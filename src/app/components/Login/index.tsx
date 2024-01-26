@@ -48,10 +48,11 @@ const Login = () => {
 		setErrorMessage("");
 	};
 
-	const onSubmit = async (data: unknown) => {
+	const onSubmit = async (data: unknown, event:any) => {
+		event.preventDefault();
+
 		try {
-			const apiUrl =""
-				// ! "https://bankme-api-5n7gl.ondigitalocean.app/integrations/auth";
+			const apiUrl = "http://localhost:3001/login";
 
 			const response = await axios.post(apiUrl, data);
 
@@ -100,11 +101,11 @@ const Login = () => {
 			</div>
 			<div className="p-8 rounded-md border-blue-500 size-80">
 				<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-					<label className="font-bold text-amber-50 text-lg ">Login</label>
+					<label className="font-bold text-amber-50 text-lg ">Email</label>
 					<input
 						type="text"
 						placeholder="Digite seu Email"
-						{...register("login", {
+						{...register("email", {
 							required: true,
 						})}
 						className="outline-blue-500 p-1"
