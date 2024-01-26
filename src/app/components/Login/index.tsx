@@ -87,7 +87,7 @@ const Login = () => {
 	}, [router]);
 
 	return (
-		<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-7 bg-background-2 bg-no-repeat bg-cover" >
+		<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-7 bg-base" >
 
 			<div className="w-3/12 ml-4">
 				<h1 className="font-bold  text-5xl text-blue-800 mb-5">
