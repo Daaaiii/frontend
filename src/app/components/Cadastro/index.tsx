@@ -46,7 +46,7 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ closeModal }) => {
 	};
 
 	const onSubmit = async (data: unknown, event:any) => {
-		event.preventDefault();
+		
 		try {
 			const apiUrl = 'http://localhost:3001/user';
 			const response = await axios.post(apiUrl, data);
