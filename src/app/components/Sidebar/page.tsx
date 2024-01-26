@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import {useRouter} from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
 import {useEffect} from "react";
 import {isAuthenticated} from "../../service/authService/AuthServive";
 import Link from "next/link";
@@ -14,21 +14,14 @@ export default function Sidebar() {
 		}
 	}, [router]);
 
-	// const onClickIntegration = () => {
-	// 	router.push("/integrations");
-	// };
+	const redirectClients = () => {
+		router.push("/clients");
+	};
+	const redirectDistance = () => {
+		router.push("/distance");
+	};
 
-	// const onClickCedentes = () => {
-	// 	router.push("/integrations/cedentes");
-	// };
-
-	// const onClickPagaveis = () => {
-	// 	router.push("/integrations/pagaveis");
-	// };
-
-	// const onClickSettings = () => {
-	// 	router.push("/settings");
-	// };
+	
 
 	const onClickLogout = () => {
 		localStorage.clear();
@@ -36,16 +29,16 @@ export default function Sidebar() {
 	};
 
 	return isAuthenticated() ? (
-		<nav className="relative h-screen left-0 top-0 w-1/5 z-50 flex flex-col justify-around px-8 bg-blue-200 shadow-gray-400 shadow-md selection:text-blue-80">
-			{/* Logo */}
+		<nav className="relative h-screen left-0 top-0 w-1/5 z-50 flex flex-col justify-around px-8 bg-base shadow-gray-400 shadow-md selection:text-blue-80">
+			
 			<div className="mb-6 flex justify-center">
 				<Link href={"/"}>
-					<Image src="/logo-bankme.png" alt="b logo" width={50} height={50} />
+					<Image src="/logo-devclean.png" className="rounded-md" priority={false}  alt="b logo" width={100} height={100} />
 				</Link>
 			</div>
-			{/* <button
+			 <button onClick={redirectClients}
 				className="mb-2 p-5 flex items-center justify-start rounded-md bg-gray-300 hover:bg-blue-600 shadow-gray-400 shadow-md"
-				onClick={onClickIntegration}
+				
 			>
 				<Image
 					alt="icon"
@@ -53,29 +46,20 @@ export default function Sidebar() {
 					width={20}
 					height={20}
 				/>
-				<span className="ml-2">Cadastrar</span>
+				<span className="ml-2">Clientes</span>
 			</button>
-			<button
-				className="mb-2 p-5 flex items-center justify-start rounded-md bg-gray-300 hover:bg-blue-600 shadow-gray-400 shadow-md"
-				onClick={onClickCedentes}
+			 <button onClick={redirectDistance}
+				className="mb-2 p-5 flex items-center justify-start rounded-md bg-gray-300 hover:bg-blue-600 shadow-gray-400 shadow-md"				
 			>
-				<Image alt="icon" src="/file-lines-solid.svg" width={20} height={20} />
-				<span className="ml-2">Cedentes</span>
+				<Image
+					alt="icon"
+					src="/pen-to-square-solid.svg"
+					width={20}
+					height={20}
+				/>
+				<span className="ml-2">Distância</span>
 			</button>
-			<button
-				className="mb-2 p-5 flex items-center justify-start rounded-md bg-gray-300 hover:bg-blue-600 shadow-gray-400 shadow-md"
-				onClick={onClickPagaveis}
-			>
-				<Image alt="icon" src="/file-lines-solid.svg" width={20} height={20} />
-				<span className="ml-2">Pagáveis</span>
-			</button> */}
-			{/* <button
-				className="mb-2 p-5 flex items-center justify-start rounded-md bg-gray-300 hover:bg-blue-600 shadow-gray-400 shadow-md"
-				onClick={onClickSettings}
-			>
-				<Image alt="icon" src="/gears-solid.svg" width={20} height={20} />
-				<span className="ml-2">Configurações</span>
-			</button> */}
+			
 			<button
 				className="mb-2 p-5 flex items-center justify-start rounded-md bg-gray-300 hover:bg-blue-600 shadow-gray-400 shadow-md"
 				onClick={onClickLogout}
