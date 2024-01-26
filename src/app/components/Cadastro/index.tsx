@@ -1,18 +1,18 @@
-import {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 interface CadastroModalProps {
 	closeModal: () => void;
 }
 
-const CadastroModal: React.FC<CadastroModalProps> = ({closeModal}) => {
+const CadastroModal: React.FC<CadastroModalProps> = ({ closeModal }) => {
 	const {
 		register,
 		handleSubmit,
 		watch,
-		formState: {errors},
+		formState: { errors },
 	} = useForm();
-	const password = watch("password", "");
+	const password = watch('password', '');
 
 	useEffect(() => {}, [password]);
 
@@ -33,7 +33,7 @@ const CadastroModal: React.FC<CadastroModalProps> = ({closeModal}) => {
 		setIsSuccessModalOpen(false);
 	};
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const openErrorModal = (message: string) => {
 		setErrorMessage(message);
@@ -42,119 +42,135 @@ const CadastroModal: React.FC<CadastroModalProps> = ({closeModal}) => {
 
 	const closeErrorModal = () => {
 		setIsErrorModalOpen(false);
-		setErrorMessage("");
+		setErrorMessage('');
 	};
 
-	const onSubmit = async (data: unknown) => {
+	const onSubmit = async (data: unknown, event:any) => {
+		event.preventDefault();
 		try {
-			const apiUrl =''
-            //!  "https://bankme-api-5n7gl.ondigitalocean.app/user";
+			const apiUrl = 'http://localhost:3001/user';
 			const response = await axios.post(apiUrl, data);
 
-			openSuccessModal();
-			setTimeout(() => {
-				closeSuccessModal();
-				closeModal();
-			}, 3000);
-		} catch (error: any) {
-			console.log(error.message);
-			if (error.response) {
-				if (error.response.data.statusCode === 401) {
-					openErrorModal(`${error.response.data.message}`);
-				} else {
-					openErrorModal(
-						"Erro ao processar a solicitação. Tente novamente mais tarde."
-					);
-				}
+			if (response.status === 201 || response.status === 200) {
+				openSuccessModal();
+				setTimeout(() => {
+					closeSuccessModal();
+					closeModal();
+				}, 3000);
+			} else {
+				openErrorModal(
+					`Erro ao processar a solicitação: Status ${response.status}. Tente novamente mais tarde.`
+				);
 				setTimeout(() => {
 					closeErrorModal();
 				}, 3000);
 			}
+			
+			return;
+		} catch (error: any) {
+			console.error(error.message);
+			let errorMessage =
+				error.response?.data?.mensagem ||
+				'Erro ao processar a solicitação. Tente novamente mais tarde.';
+			openErrorModal(errorMessage);
+			setTimeout(() => {
+				closeErrorModal();
+				
+			}, 3000);
 		}
+		
 	};
 
 	return (
-		<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-			<div className="bg-white p-8 rounded-md">
-				<div className="flex justify-between items-center mb-3">
-					<h2 className="text-2xl font-bold text-blue-500">Cadastro</h2>
+		<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50'>
+			<div className='bg-white p-8 rounded-md'>
+				<div className='flex justify-between items-center mb-3'>
+					<h2 className='text-2xl font-bold text-blue-500'>
+						Cadastro
+					</h2>
 					<button
-						className="text-white bg-blue-500 px-3 py-1 rounded-md"
-						onClick={closeModal}
-					>
+						className='text-white bg-blue-500 px-3 py-1 rounded-md'
+						onClick={closeModal}>
 						X
 					</button>
 				</div>
 
-				<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-					<label className="font-bold text-gray-700 text-lg ">Nome</label>
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className='flex flex-col gap-3'>
+					<label className='font-bold text-gray-700 text-lg '>
+						Nome
+					</label>
 					<input
-						type="text"
-						placeholder="Digite seu Nome"
-						{...register("name", {
+						type='text'
+						placeholder='Digite seu Nome'
+						{...register('name', {
 							required: true,
 						})}
-						className="outline-blue-500 p-1"
+						className='outline-blue-500 p-1'
 					/>
-					{errors?.nome?.type === "required" && (
-						<p className="error-message text-red-600 text-sm">
+					{errors?.nome?.type === 'required' && (
+						<p className='error-message text-red-600 text-sm'>
 							Nome é obrigatório.
 						</p>
 					)}
 
-					<label className="font-bold text-gray-700 text-lg ">Email</label>
+					<label className='font-bold text-gray-700 text-lg '>
+						Email
+					</label>
 					<input
-						type="text"
-						placeholder="Digite seu Email"
-						{...register("login", {
+						type='text'
+						placeholder='Digite seu Email'
+						{...register('email', {
 							required: true,
 						})}
-						className="outline-blue-500 p-1"
+						className='outline-blue-500 p-1'
 					/>
-					{errors?.login?.type === "required" && (
-						<p className="error-message text-red-600 text-sm">
+					{errors?.login?.type === 'required' && (
+						<p className='error-message text-red-600 text-sm'>
 							Login é obrigatório.
 						</p>
 					)}
-					<label className="font-bold text-gray-700 text-lg ">Senha</label>
+					<label className='font-bold text-gray-700 text-lg '>
+						Senha
+					</label>
 					<input
-						type="password"
-						placeholder="Digite sua Senha"
-						{...register("password", {
+						type='password'
+						placeholder='Digite sua Senha'
+						{...register('password', {
 							required: true,
 							minLength: 8,
 							validate: validatePassword,
 						})}
-						className="outline-blue-500 p-1"
+						className='outline-blue-500 p-1'
 					/>
-					{errors.password?.type === "required" && (
-						<p className="error-message text-red-600 text-sm">
+					{errors.password?.type === 'required' && (
+						<p className='error-message text-red-600 text-sm'>
 							Senha obrigatória.
 						</p>
 					)}
 
-					{errors.password?.type === "minLength" && (
-						<p className="error-message text-red-600 text-sm">
+					{errors.password?.type === 'minLength' && (
+						<p className='error-message text-red-600 text-sm'>
 							Senha deve ter no mínimo 8 caracteres.
 						</p>
 					)}
-					{errors.password?.type === "validate" && (
-						<p className="error-message text-red-600 text-sm">
-							Senha deve ter no mínimo 8 caracteres, 1 letra maiúscula, 1
-							símbolo e 1 número.
+					{errors.password?.type === 'validate' && (
+						<p className='error-message text-red-600 text-sm'>
+							Senha deve ter no mínimo 8 caracteres, 1 letra
+							maiúscula, 1 símbolo e 1 número.
 						</p>
 					)}
 					<button
-						className="bg-base-green px-4 py-2 rounded-md font-bold text-blue-600 "
-						onClick={() => handleSubmit(onSubmit)()}
-					>
+						className='bg-base-green px-4 py-2 rounded-md font-bold text-blue-600 '
+						onClick={() => handleSubmit(onSubmit)()}>
 						Enviar
 					</button>
 				</form>
 				{isSuccessModalOpen && (
-					<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-						<div className="bg-white p-8 rounded-md">
-							<p className="text-green-500 text-lg font-semibold">
+					<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50'>
+						<div className='bg-white p-8 rounded-md'>
+							<p className='text-green-500 text-lg font-semibold'>
 								Dados enviados com sucesso!
 							</p>
 						</div>
@@ -162,9 +178,9 @@ const CadastroModal: React.FC<CadastroModalProps> = ({closeModal}) => {
 				)}
 
 				{isErrorModalOpen && (
-					<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-						<div className="bg-white p-8 rounded-md">
-							<p className="text-red-500 text-lg font-semibold">
+					<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50'>
+						<div className='bg-white p-8 rounded-md'>
+							<p className='text-red-500 text-lg font-semibold'>
 								{errorMessage}
 							</p>
 						</div>
