@@ -12,6 +12,8 @@ const config: Config = {
         "background": "url('/fundo2.png')",
         "background-2":
           "url('/bubble1.png')",
+        "background-3":
+          "url('/limpeza1.png')",
       },
     },
   },
