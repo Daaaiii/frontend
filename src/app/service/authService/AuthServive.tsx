@@ -1,6 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
 
-const token = 'tokenKEY';
 
 export function login(token: string) {
 	localStorage.setItem('token', token);
@@ -11,7 +10,10 @@ export function logout() {
 }
 
 export function getToken() {
-	return localStorage.getItem('token');
+	if (typeof window !== 'undefined') {
+		return localStorage.getItem('token');
+	  }
+	  return null;
 }
 
 export function isAuthenticated() {
