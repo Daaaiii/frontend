@@ -2,7 +2,6 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import axios from "axios";
-import Image from "next/image";
 import {useRouter} from "next/navigation";
 import isTokenExpired from "../../service/authService/AuthServive";
 
