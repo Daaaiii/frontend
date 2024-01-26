@@ -2,8 +2,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import ClientUpdateForm from '../Cadastro/clientUpdateForm';
 
-interface Client {
+export interface Client {
 	id: number;
 	name: string;
 	email: string;
@@ -16,34 +17,63 @@ export default function Client() {
 	const [clients, setClients] = useState<Client[]>([]);
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const [editingClientId, setEditingClientId] = useState<Client| null>(null);
 
-	useEffect(() => {
-		const fetchClients = async () => {
-			try {
-				const apiUrl = 'http://localhost:3001/client';
-
-				const authToken = localStorage.getItem('token');
-				const headers = {
-					headers: {
-						Authorization: `Bearer ${authToken}`,
-					},
-				};
-
-				const response = await axios.get(apiUrl, headers);
-				if (response.data.length === 0) {
-					setIsErrorModalOpen(true);
-					setErrorMessage('Não há nenhum pagável cadastrado.');
-				}
-
-				setClients(response.data);
-			} catch (error) {
-				setIsErrorModalOpen(true);
-				setErrorMessage(
-					'Erro ao processar a solicitação. Tente novamente mais tarde.'
-				);
+	const editClient = async (client: Client) => {
+		setEditingClientId(client);
+		setIsEditModalOpen(true);
+	};
+	const deleteClient = async(clientId:number)=>{
+		
+		try {
+			const apiUrl = `http://localhost:3001/client/${clientId}`;
+			const authToken = localStorage.getItem('token');
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${authToken}`,
+				},
+			};			
+			
+			const response = await axios.delete(apiUrl, headers);
+			
+			if (response.status === 200) {
+				fetchClients();
 			}
-		};
+		} catch (error) {
+			setIsErrorModalOpen(true);
+			setErrorMessage(
+				'Erro ao processar a solicitação. Tente novamente mais tarde.'
+			);
+		}
+	}
 
+	const fetchClients = async () => {
+		try {
+			const apiUrl = 'http://localhost:3001/client';
+
+			const authToken = localStorage.getItem('token');
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${authToken}`,
+				},
+			};
+
+			const response = await axios.get(apiUrl, headers);
+			if (response.data.length === 0) {
+				setIsErrorModalOpen(true);
+				setErrorMessage('Não há nenhum cliente cadastrado.');
+			}
+
+			setClients(response.data);
+		} catch (error) {
+			setIsErrorModalOpen(true);
+			setErrorMessage(
+				'Erro ao processar a solicitação. Tente novamente mais tarde.'
+			);
+		}
+	};
+	useEffect(() => {
 		fetchClients();
 	}, []);
 
@@ -76,7 +106,7 @@ export default function Client() {
 								<td className='pb-2'>{client.coord_x}</td>
 								<td className='pb-2'>{client.coord_y}</td>
 								<td className='pb-2'>
-									<button>
+									<button onClick={() => editClient(client)}>
 										<Image
 											alt='icon'
 											src='/pen-to-square-solid.svg'
@@ -86,7 +116,7 @@ export default function Client() {
 									</button>
 								</td>
 								<td className='pb-2'>
-									<button>
+									<button onClick={()=>deleteClient(client.id)}>
 										<Image
 											alt='icon'
 											src='/trash-can-solid.svg'
@@ -114,6 +144,16 @@ export default function Client() {
 						</button>
 					</div>
 				</div>
+			)}
+			{isEditModalOpen && editingClientId && (
+				<ClientUpdateForm
+					client={editingClientId}
+					closeModal={() => {
+						setIsEditModalOpen(false);
+						setEditingClientId(null);
+					}}
+					onClientUpdated={fetchClients}
+				/>
 			)}
 		</div>
 	);
