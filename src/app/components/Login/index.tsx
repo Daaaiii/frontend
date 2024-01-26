@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import axios from "axios";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
-import isTokenExpired, { getToken } from "../../service/authService/AuthServive";
+import isTokenExpired from "../../service/authService/AuthServive";
 
 const Login = () => {
 	const router = useRouter();
@@ -48,15 +48,17 @@ const Login = () => {
 		setErrorMessage("");
 	};
 
-	const onSubmit = async (data: unknown, event:any) => {
-		event.preventDefault();
+	const onSubmit = async (data: unknown) => {
+		
 
 		try {
 			const apiUrl = "http://localhost:3001/login";
 
 			const response = await axios.post(apiUrl, data);
+			console.log(response)
 
-			const token = response.data.accessToken;
+			const token = response.data.token;
+			console.log(token)
 
 			localStorage.setItem("token", token);
 
@@ -89,33 +91,33 @@ const Login = () => {
 	}, [router]);
 
 	return (
-		<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-7 bg-background bg-no-repeat bg-cover" >
+		<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-7 bg-background-2 bg-no-repeat bg-cover" >
 
 			<div className="w-3/12 ml-4">
-				<h1 className="font-bold  text-5xl text-amber-50 mb-5">
-					Bem-vindo ao Dev CleanUp
+				<h1 className="font-bold  text-5xl text-blue-800 mb-5">
+					Bem-vindo ao Dev CleanUp!
 				</h1>
-				<p className=" text-amber-50 text-xl">
+				<p className=" text-blue-800 text-xl">
 					Por meio da plataforma exclusiva do Facilita Dev, qualquer pessoa pode gerenciar seus clientes.
 				</p>
 			</div>
-			<div className="p-8 rounded-md border-blue-500 size-80">
+			<div className="p-8 rounded-md border-4 border-blue-600 size-80">
 				<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-					<label className="font-bold text-amber-50 text-lg ">Email</label>
+					<label className="font-bold text-blue-600 text-lg ">Email</label>
 					<input
 						type="text"
 						placeholder="Digite seu Email"
 						{...register("email", {
 							required: true,
 						})}
-						className="outline-blue-500 p-1"
+						className="outline-blue-600 p-1 border-2 border-blue-600 rounded-md bg-amber-50"
 					/>
 					{errors?.login?.type === "required" && (
 						<p className="error-message text-red-600 font-bold  text-sm">
 							Login é obrigatório.
 						</p>
 					)}
-					<label className="font-bold text-amber-50 text-lg ">Senha</label>
+					<label className="font-bold text-blue-600 text-lg ">Senha</label>
 					<input
 						type="password"
 						placeholder="Digite sua Senha"
@@ -124,7 +126,7 @@ const Login = () => {
 							minLength: 8,
 							validate: validatePassword,
 						})}
-						className="outline-blue-500 p-1"
+						className="outline-blue-500 p-1 border-2 border-blue-600 rounded-md bg-amber-50"
 					/>
 					{errors.password?.type === "required" && (
 						<p className="error-message text-red-600 font-bold text-sm">
@@ -144,14 +146,14 @@ const Login = () => {
 						</p>
 					)}
 					<button
-						className="bg-base-green px-4 py-2 rounded-md font-bold text-amber-50 "
+						className="bg-base-green px-4 py-2 rounded-md font-bold text-blue-600  border-2 border-blue-600 bg-amber-50 hover:bg-blue-600 hover:text-amber-50"
 						onClick={() => handleSubmit(onSubmit)()}
 					>
 						Entrar
 					</button>
 				</form>
 				{isSuccessModalOpen && (
-					<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+					<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-blue-600 bg-opacity-50">
 						<div className="bg-white p-8 rounded-md">
 							<p className="text-base-green text-lg font-semibold">
 								Dados enviados com sucesso!
