@@ -53,7 +53,7 @@ export default function Sidebar() {
 			>
 				<Image
 					alt="icon"
-					src="/pen-to-square-solid.svg"
+					src="/map-location-dot-solid.svg"
 					width={20}
 					height={20}
 				/>
