@@ -48,17 +48,14 @@ const Login = () => {
 		setErrorMessage("");
 	};
 
-	const onSubmit = async (data: unknown) => {
-		
+	const onSubmit = async (data: unknown) => {	
 
 		try {
 			const apiUrl = "http://localhost:3001/login";
 
 			const response = await axios.post(apiUrl, data);
-			console.log(response)
 
 			const token = response.data.token;
-			console.log(token)
 
 			localStorage.setItem("token", token);
 
