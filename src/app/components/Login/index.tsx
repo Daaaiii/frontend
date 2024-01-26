@@ -108,9 +108,9 @@ const Login = () => {
 						})}
 						className="outline-blue-600 p-1 border-2 border-blue-600 rounded-md bg-amber-50"
 					/>
-					{errors?.login?.type === "required" && (
+					{errors?.email?.type === "required" && (
 						<p className="error-message text-red-600 font-bold  text-sm">
-							Login é obrigatório.
+							Informe seu email.
 						</p>
 					)}
 					<label className="font-bold text-blue-600 text-lg ">Senha</label>
@@ -126,7 +126,7 @@ const Login = () => {
 					/>
 					{errors.password?.type === "required" && (
 						<p className="error-message text-red-600 font-bold text-sm">
-							Senha obrigatória.
+							Informe sua senha.
 						</p>
 					)}
 
