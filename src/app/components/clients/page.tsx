@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
-import ClientUpdateForm from '../Cadastro/clientUpdateForm';
+import ClientUpdateForm from '../Cadastro/clientForm';
 
 export interface Client {
 	id: number;
@@ -22,7 +22,7 @@ export default function Client() {
 	const [sortField, setSortField] = useState<keyof Client | null>(null);
 	const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 	const [filter, setFilter] = useState('');
-    const [filteredClients, setFilteredClients] = useState<Client[]>([]);
+	const [filteredClients, setFilteredClients] = useState<Client[]>([]);
 
 	const editClient = async (client: Client) => {
 		setEditingClientId(client);
@@ -69,6 +69,7 @@ export default function Client() {
 			}
 
 			setClients(response.data);
+			setFilteredClients(response.data);
 		} catch (error) {
 			setIsErrorModalOpen(true);
 			setErrorMessage(
@@ -79,6 +80,11 @@ export default function Client() {
 	useEffect(() => {
 		fetchClients();
 	}, []);
+
+	const createNewClient = () => {
+		setEditingClientId(null);
+		setIsEditModalOpen(true);
+	}
 
 	const onSortChange = (field: keyof Client) => {
 		if (sortField === field) {
@@ -107,79 +113,80 @@ export default function Client() {
 		});
 	};
 	const applyFilter = () => {
-       
-        const filtered = clients.filter(client => 
-            client.name.toLowerCase().includes(filter.toLowerCase()) ||
-            client.id.toString().includes(filter)
-        );
-        setFilteredClients(filtered);
-    }
+		const filtered = clients.filter(
+			(client) =>
+				client.name.toLowerCase().includes(filter.toLowerCase()) ||
+				client.id.toString().includes(filter)
+		);
+		setFilteredClients(filtered);
+	};
 
-    const handleFilterChange = (event: { target: { value: SetStateAction<string>; }; }) => {
-        setFilter(event.target.value);
-    };
+	const handleFilterChange = (event: {
+		target: { value: SetStateAction<string> };
+	}) => {
+		setFilter(event.target.value);
+	};
 
 	return (
 		<div className='relative  flex flex-col h-screen w-full items-start justify-start p-4 m-4 rounded-md bg-base'>
 			<h1 className='w-full flex items-start justify-center text-blue-500 text-2xl font-bold p-4 mb-2'>
 				Clientes
 			</h1>
-			<div className='mb-4 flex'>
-                <input
-                    type="text"
-                    placeholder="Filtrar por nome ou ID..."
-                    value={filter}
-                    onChange={handleFilterChange}
-                    className="p-2 border-2 border-gray-300 rounded-md"
-                />
-                <button
-                    onClick={applyFilter}
-                    className='ml-2 bg-blue-500 text-white p-2 rounded-md'
-                >
-                    Filtrar
-                </button>
-            </div>
+			<div className='mb-4 flex justify-between items-center gap-6'>
+				<div className=''>
+					<button
+						onClick={createNewClient}
+						className='ml-2 bg-blue-500 text-white p-2 rounded-md'>
+						Cadastrar Cliente
+					</button>
+				</div>
+				<div className=''>
+					<input
+						type='text'
+						placeholder='Filtrar por nome ou ID...'
+						value={filter}
+						onChange={handleFilterChange}
+						className='p-2 border-2 border-gray-300 rounded-md'
+					/>
+					<button
+						onClick={applyFilter}
+						className='ml-2 bg-blue-500 text-white p-2 rounded-md'>
+						Filtrar
+					</button>
+				</div>
+			</div>
 
 			<div className='w-full overflow-x-auto'>
 				<table className='table-auto w-full'>
 					<thead>
 						<tr className='justify-evenly text-gray-500 pb-4 pt-4 text-center align-middle'>
 							<th
-								className='pb-2'
+								className='pb-2 pl-2'
 								onClick={() => onSortChange('id')}>
-								<p>ID</p>
-								<Image
-									alt='icon'
-									src={
-										sortField === 'name' &&
-										sortDirection === 'asc'
-											? '/sort-up-solid.svg'
-											: '/sort-down-solid.svg'
-									}
-									width={10}
-									height={10}
-								/>
+								<div className='flex justify-between items-center'>
+									<p>ID</p>
+									<Image
+										alt='icon'
+										src={'/sort-solid.svg'}
+										width={10}
+										height={10}
+									/>
+								</div>
 							</th>
 							<th
-								className='pb-2'
+								className='pb-2 pl-2'
 								onClick={() => onSortChange('name')}>
-								<p>Nome</p>
-								<Image
-									alt='icon'
-									src={
-										sortField === 'name' &&
-										sortDirection === 'asc'
-											? '/sort-up-solid.svg'
-											: '/sort-down-solid.svg'
-									}
-									width={10}
-									height={10}
-								/>
+								<div className='flex justify-between items-center'>
+									<p>Nome</p>
+									<Image
+										alt='icon'
+										src={'/sort-solid.svg'}
+										width={10}
+										height={10}
+									/>
+								</div>
 							</th>
-							<th
-								className='pb-2'>
-								Telefone								
-							</th>
+							<th className='pb-2'>Telefone</th>
 							<th className='pb-2'>Coord X</th>
 							<th className='pb-2'>Coord Y</th>
 							<th className='pb-2'>Editar</th>
@@ -187,7 +194,7 @@ export default function Client() {
 						</tr>
 					</thead>
 					<tbody>
-						{filteredClients.map((client) => (
+						{clients.map((client) => (
 							<tr
 								key={client.id}
 								className='items-center text-gray-500 pb-4 pt-4 text-center align-middle'>
@@ -237,9 +244,10 @@ export default function Client() {
 					</div>
 				</div>
 			)}
-			{isEditModalOpen && editingClientId && (
+			{isEditModalOpen && (
 				<ClientUpdateForm
 					client={editingClientId}
+					isEditing={editingClientId !== null}
 					closeModal={() => {
 						setIsEditModalOpen(false);
 						setEditingClientId(null);
