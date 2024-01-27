@@ -23,9 +23,7 @@ export default function ClientsDistance() {
 				},
 			};
 
-			const response = await axios.get(apiUrl, headers);
-
-			console.log(response.data);
+			const response = await axios.get(apiUrl, headers);			
 
 			if (response.data.length === 0) {
 				setIsErrorModalOpen(true);
