@@ -1,26 +1,44 @@
-'use client'
+'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { Client } from '../clients/page';
 
 interface CadastroModalProps {
-	closeModal: () => void;    
+	closeModal: () => void;
+	isEditing: null;
 	client: Client;
 	onClientUpdated?: () => void;
 }
 
-const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, onClientUpdated}) => {
-	const { register, handleSubmit, formState: { errors } } = useForm({
-        defaultValues: {
-            name: client.name,
-            email: client.email,
-            telephone: client.telephone,
-            coord_x: client.coord_x,
-            coord_y: client.coord_y,
-        }
-    });
-		
+const ClientForm: React.FC<CadastroModalProps> = ({
+	closeModal,
+	isEditing,
+	client,
+	onClientUpdated,
+}) => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({
+		defaultValues: client
+			? {
+					name: client.name,
+					email: client.email,
+					telephone: client.telephone,
+					coord_x: client.coord_x,
+					coord_y: client.coord_y,
+			  }
+			: {
+					name: '',
+					email: '',
+					telephone: '',
+					coord_x: '',
+					coord_y: '',
+			  },
+	});
+
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
 	const openSuccessModal = () => {
@@ -44,28 +62,32 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 	};
 
 	const onSubmit = async (data: unknown) => {
+		try {
+			let apiUrl = 'http://localhost:3001/client';
+			let method = axios.post;
 
-			try {
-			const apiUrl = `http://localhost:3001/client/${client.id}`;
+			if (isEditing && client) {
+				apiUrl += `/${client.id}`;
+				method = axios.put;
+			}
 
 			const authToken = localStorage.getItem('token');
-				const headers = {
-					headers: {
-						Authorization: `Bearer ${authToken}`,
-					},
-				};
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${authToken}`,
+				},
+			};
 
-				const response = await axios.put(apiUrl, data, headers);
+			const response = await method(apiUrl, data, headers);
 			if (response.status === 201 || response.status === 200) {
 				openSuccessModal();
 				setTimeout(() => {
 					closeSuccessModal();
 					closeModal();
 					if (onClientUpdated) {
-                        onClientUpdated();
-                    }
+						onClientUpdated();
+					}
 				}, 1000);
-				
 			} else {
 				openErrorModal(
 					`Erro ao processar a solicitação: Status ${response.status}. Tente novamente mais tarde.`
@@ -74,7 +96,7 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 					closeErrorModal();
 				}, 2000);
 			}
-			
+
 			return;
 		} catch (error: any) {
 			console.error(error.message);
@@ -84,18 +106,16 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 			openErrorModal(errorMessage);
 			setTimeout(() => {
 				closeErrorModal();
-				
 			}, 3000);
 		}
-		
 	};
 
 	return (
 		<div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50'>
-			<div className='bg-white p-8 rounded-md'>
+			<div className='p-8 rounded-md bg-base'>
 				<div className='flex justify-between items-center mb-3'>
 					<h2 className='text-2xl font-bold text-blue-500'>
-						Editar Client
+						{isEditing ? 'Editar Cliente' : 'Cadastrar Cliente'}
 					</h2>
 					<button
 						className='text-white bg-blue-500 px-3 py-1 rounded-md'
@@ -106,7 +126,7 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className='flex flex-col gap-3'>
+					className='flex flex-col gap-3 '>
 					<label className='font-bold text-gray-700 text-lg '>
 						Nome
 					</label>
@@ -115,7 +135,7 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 						{...register('name', {
 							required: true,
 						})}
-						className='outline-blue-500 p-1'
+						className='outline-blue-500 p-1 border-2 border-blue-600 rounded-md '
 					/>
 					{errors?.name?.type === 'required' && (
 						<p className='error-message text-red-600 text-sm'>
@@ -131,13 +151,13 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 						{...register('email', {
 							required: true,
 						})}
-						className='outline-blue-500 p-1'
+						className='outline-blue-500 p-1 border-2 border-blue-600 rounded-md'
 					/>
 					{errors?.email?.type === 'required' && (
 						<p className='error-message text-red-600 text-sm'>
-							email é obrigatório.
+							Email é obrigatório.
 						</p>
-					)}									
+					)}
 					<label className='font-bold text-gray-700 text-lg '>
 						Telefone
 					</label>
@@ -146,13 +166,13 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 						{...register('telephone', {
 							required: true,
 						})}
-						className='outline-blue-500 p-1'
+						className='outline-blue-500 p-1 border-2 border-blue-600 rounded-md '
 					/>
 					{errors.telephone?.type === 'required' && (
 						<p className='error-message text-red-600 text-sm'>
-							Senha obrigatória.
+							Telefone obrigatório.
 						</p>
-					)}					
+					)}
 					<label className='font-bold text-gray-700 text-lg '>
 						Coordenadas X
 					</label>
@@ -161,13 +181,13 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 						{...register('coord_x', {
 							required: true,
 						})}
-						className='outline-blue-500 p-1'
+						className='outline-blue-500 p-1 border-2 border-blue-600 rounded-md '
 					/>
 					{errors.coord_x?.type === 'required' && (
 						<p className='error-message text-red-600 text-sm'>
 							Informe a Coordenada X.
 						</p>
-					)}					
+					)}
 					<label className='font-bold text-gray-700 text-lg '>
 						Coordenadas Y
 					</label>
@@ -176,18 +196,18 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 						{...register('coord_y', {
 							required: true,
 						})}
-						className='outline-blue-500 p-1'
+						className='outline-blue-500 p-1 border-2 border-blue-600 rounded-md '
 					/>
 					{errors.coord_y?.type === 'required' && (
 						<p className='error-message text-red-600 text-sm'>
 							Informe a Coordenada Y.
 						</p>
-					)}					
-					
+					)}
+
 					<button
-						className='bg-base-green px-4 py-2 rounded-md font-bold text-blue-600 '
+						className='bg-base-green px-4 py-2 rounded-md font-bold text-blue-600  border-2 border-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-300 ease-in-out'
 						onClick={() => handleSubmit(onSubmit)()}>
-						Enviar
+						{isEditing ? 'Atualizar' : 'Cadastrar'}
 					</button>
 				</form>
 				{isSuccessModalOpen && (
@@ -214,4 +234,4 @@ const ClientUpdateForm: React.FC<CadastroModalProps> = ({ closeModal, client, on
 	);
 };
 
-export default ClientUpdateForm;
+export default ClientForm;
