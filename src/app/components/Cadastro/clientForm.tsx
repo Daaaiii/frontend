@@ -6,8 +6,8 @@ import { Client } from '../clients/page';
 
 interface CadastroModalProps {
 	closeModal: () => void;
-	isEditing: null;
-	client: Client;
+	isEditing: boolean;
+	client: Client | null;
 	onClientUpdated?: () => void;
 }
 
