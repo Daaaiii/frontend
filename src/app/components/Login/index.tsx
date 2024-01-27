@@ -106,7 +106,7 @@ const Login = () => {
 						{...register("email", {
 							required: true,
 						})}
-						className="outline-blue-600 p-1 border-2 border-blue-600 rounded-md bg-amber-50"
+						className="outline-blue-600 p-1 border-2 border-blue-600 rounded-md "
 					/>
 					{errors?.email?.type === "required" && (
 						<p className="error-message text-red-600 font-bold  text-sm">
@@ -122,7 +122,7 @@ const Login = () => {
 							minLength: 8,
 							validate: validatePassword,
 						})}
-						className="outline-blue-500 p-1 border-2 border-blue-600 rounded-md bg-amber-50"
+						className="outline-blue-500 p-1 border-2 border-blue-600 rounded-md"
 					/>
 					{errors.password?.type === "required" && (
 						<p className="error-message text-red-600 font-bold text-sm">
@@ -142,7 +142,7 @@ const Login = () => {
 						</p>
 					)}
 					<button
-						className="bg-base-green px-4 py-2 rounded-md font-bold text-blue-600  border-2 border-blue-600 bg-amber-50 hover:bg-blue-600 hover:text-amber-50"
+						className="bg-base-green px-4 py-2 rounded-md font-bold text-blue-600  border-2 border-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-300 ease-in-out "
 						onClick={() => handleSubmit(onSubmit)()}
 					>
 						Entrar
