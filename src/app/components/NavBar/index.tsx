@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import CadastroModal from "../Cadastro";
+import CadastroModal from "../Cadastro/userForm";
 
 
 export default function Navbar() {
